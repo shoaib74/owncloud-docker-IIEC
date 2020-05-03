@@ -1,0 +1,48 @@
+version: '3'
+services:
+  mariadb:
+    image: 'bitnami/mariadb:10.1'
+    container_name: dbos
+    ports:
+            -  '1306:3306'
+    restart: always
+    environment:
+             MARIADB_USER: shoaibkhan
+             MARIADB_DATABASE: mydb
+             MARIADB_ROOT_PASSWORD: shoaib
+             MARIADB_PASSWORD: shoaib
+    volumes:
+      - 'mariadb_data:/bitnami'
+    networks:
+       - db_net
+  owncloud:
+    image: 'bitnami/owncloud:10'
+    container_name: cloudos
+    restart: always
+    environment:
+             MARIADB_HOST: mariadb
+             MARIADB_PORT_NUMBER: 1306
+             OWNCLOUD_DATABASE_USER: shoaibkhan
+             OWNCLOUD_DATABASE_NAME: mydb
+             OWNCLOUD_HOST: localhost
+             OWNCLOUD_PASSWORD: shoaib
+    ports:
+      - '8000:80'
+      - '443:443'
+    volumes:
+      - 'owncloud_data:/bitnami'
+    networks:
+      - cloud_net
+    depends_on:
+      - mariadb
+volumes:
+  mariadb_data:
+    driver: local
+  owncloud_data:
+    driver: local
+networks:
+     db_net:
+        driver: bridge
+     cloud_net:
+         driver: bridge
+
